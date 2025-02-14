@@ -8,29 +8,36 @@ import java.util.Scanner;
 public class Auth {
     private final Scanner scanner = new Scanner(System.in);
     HashMap<String, User> registeredUser = new HashMap<>();
+    TaskManager taskManager = new TaskManager();
 
 
     public void login() {
-        System.out.println("----------- LOGIN ------------");
-        System.out.println("User Name :");
-        String userName = scanner.nextLine();
-        System.out.println("Password :");
-        String password = scanner.nextLine();
-        User user = registeredUser.get(userName);
-        if (user == null) {
-            System.out.println("USER NOT FOUND, WOULD YOU LIKE TO REGISTER ? (YES/NO)");
-            String response = scanner.nextLine();
-            if (response.equalsIgnoreCase("yes")) {
-                register();
-            } else if (!response.equalsIgnoreCase("no")) {
-                System.out.println("INVALID INPUT PLEASE TRY AGAIN !");
+        while (true) {
+            System.out.println("----------- LOGIN ------------");
+            System.out.println("User Name :");
+            String userName = scanner.nextLine();
+            System.out.println("Password :");
+            String password = scanner.nextLine();
+            User user = registeredUser.get(userName);
+            if (user == null) {
+                System.out.println("USER NOT FOUND, WOULD YOU LIKE TO REGISTER ? (YES/NO)");
+                String response = scanner.nextLine();
+                if (response.equalsIgnoreCase("yes")) {
+                    register();
+                } else if (!response.equalsIgnoreCase("no")) {
+                    System.out.println("INVALID INPUT PLEASE TRY AGAIN !");
+                    scanner.nextLine();
+                    continue;
+                }
+                return;
             }
-            return;
-        }
-        if (user.checkLogin(userName, password)) {
-            System.out.println("Login Success");
-            TaskManager taskManager = new TaskManager();
-            taskManager.manageTaskOption(userName);
+            if (user.checkLogin(userName, password)) {
+                System.out.println("Login Success");
+                taskManager.seUserSession(user);
+                break;
+            } else {
+                System.out.println("USERNAME AND PASSWORD NOT MATCH, PLEASE TRY AGAIN");
+            }
         }
     }
 
